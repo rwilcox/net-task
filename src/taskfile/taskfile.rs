@@ -27,7 +27,7 @@ impl TaskDefinition {
             .write_all(self.script.clone().as_bytes());
 
         let output = run_task.wait_with_output();
-        println!("{:?}", output);
+        //println!("{:?}", output);
         return output.unwrap().status;
     }
 }
