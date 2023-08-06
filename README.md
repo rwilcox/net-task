@@ -1,4 +1,4 @@
-# Why this thing
+# Why Net-Task
 
 Some build systems couple building software with executing non build related tasks in software development.
 
@@ -10,6 +10,13 @@ But, the problem is: if we have a ton of services using these starter packs, do 
 
 Wouldn't it be great to have a task runner that could inherit tasks from task files that live _elsewhere_? (later versions of this utility may deal with the safety aspect of downloading and running nonsense straight from the internet...)
 
+Likewise, what if the standard "lint:fix" script doesn't work for your team? You may want to override standard task implementations. You should be able to!
+
+## TL; DR
+
+  * How can you DRY up all those development related tasks you have in your microservice herd? (Answer: Net-task!)
+  * How can you let your teams override organization standard tasks? (while maybe forcing the standard version to run)? (Answer: Net-task!)
+  * How can you do all this in the lightest way possible, across languages? (A: net-task!)
 
 # The net-task.yml spec
 
