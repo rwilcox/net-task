@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::process::{Command, Stdio, ExitStatus};
 use std::io::{self, Write};
+use ureq;
 
 use std::path::Path;
 use std::fs;
@@ -60,6 +61,7 @@ fn tasks_definition<'de, D>(des: D) -> Result<Vec<TaskDefinition>, D::Error> whe
 
 type Taskfiles = Vec<Box<Taskfile>>;
 
+/// externals refer to other task files in other locations. Resolve the location and parse, returning us a list of all Taskfiles you found
 fn external_definition<'de, D>(des: D) -> Result<Taskfiles, D::Error> where
     D: serde::Deserializer<'de>,
 {
@@ -76,7 +78,11 @@ fn external_definition<'de, D>(des: D) -> Result<Taskfiles, D::Error> where
         {
             let mut externals = Taskfiles::new();
             while let Some(location) = seq.next_element::<String>()? {
-                externals.push(Box::new(Taskfile::new_from_file(location)));
+                if (location.starts_with("http")) {
+                    externals.push(Box::new(Taskfile::new_from_url(location)))
+                } else {
+                        externals.push(Box::new(Taskfile::new_from_file(location)));
+                    }
             }
 
             Ok(externals)
@@ -96,12 +102,16 @@ pub struct Taskfile {
     // with the same name, varying only in specified OS
     //pub tasks: HashMap<String, TaskDefinition>,
 
+    #[serde(default)]
     #[serde(deserialize_with = "tasks_definition")]
     pub tasks: Vec<TaskDefinition>,
 
     #[serde(default)]
     #[serde(deserialize_with = "external_definition")]
-    pub externals: Taskfiles
+    pub externals: Taskfiles,
+
+    pub from_file: Option<String>
+
 }
 
 impl Taskfile {
@@ -112,8 +122,20 @@ impl Taskfile {
 
         let in_str = fs::read_to_string(fpath).expect("Unable to read given file");
 
-        let output: Taskfile = serde_yaml::from_str(&in_str).expect("could not parse file");
+        Taskfile::new_from_string(in_str, filepath)
+    }
+
+    pub fn new_from_string(in_str: String, location: String) -> Taskfile {
+        let mut output: Taskfile = serde_yaml::from_str(&in_str).expect("could not parse file");
+        output.from_file = Some(location);
         return output
+    }
+
+    pub fn new_from_url(extend_url_str: String) -> Taskfile {
+         let body: String = ureq::get(extend_url_str.as_str()).call().unwrap()
+            .into_string().expect("could not fetch url");
+
+        Taskfile::new_from_string(body, extend_url_str)
     }
 
 }
