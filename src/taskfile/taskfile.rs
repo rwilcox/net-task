@@ -110,19 +110,20 @@ pub struct Taskfile {
     #[serde(deserialize_with = "external_definition")]
     pub externals: Taskfiles,
 
-    pub from_file: Option<String>
+    pub from_file: Option<String>,
 
+    pub name: String
 }
 
 impl Taskfile {
 
     /// filepath may be a relative path OR (eventually) a URL
-    pub fn new_from_file(filepath: String) -> Taskfile {
-        let fpath = Path::new(&filepath);
+    pub fn new_from_file(filepath: PathBuf) -> Taskfile {
+        let fpath = filepath.as_path();
 
         let in_str = fs::read_to_string(fpath).expect("Unable to read given file");
 
-        Taskfile::new_from_string(in_str, filepath)
+        Taskfile::new_from_string(in_str, filepath.to_str().unwrap().to_string())
     }
 
     pub fn new_from_string(in_str: String, location: String) -> Taskfile {
