@@ -33,6 +33,7 @@ impl TaskDefinition {
     }
 }
 
+/// we want to allow the user to give us YAML hashlike syntax but turn it into an array
 /// mostly from https://stackoverflow.com/a/72947051/224334
 fn tasks_definition<'de, D>(des: D) -> Result<Vec<TaskDefinition>, D::Error> where
     D: serde::Deserializer<'de>,
