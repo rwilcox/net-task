@@ -50,7 +50,19 @@ fn tasks_definition<'de, D>(des: D) -> Result<Vec<TaskDefinition>, D::Error> whe
         {
              while let Some((name, mut item)) = map.next_entry::<String, TaskDefinition>()? {
                 item.name = Some(name);
-                self.0.push(item);
+                let os = item.os.clone().unwrap_or("any".to_string());
+                let anys = "any".to_string();
+                let current_os = std::env::consts::OS;
+
+                let can_be_executed = match os {
+                    _ if os == anys => true,
+                    _ if os == current_os => true,
+                    _ => false,
+                };
+
+                if can_be_executed {
+                    self.0.push(item);
+                }
             }
             Ok(self.0)
         }
