@@ -35,7 +35,7 @@ A task definition MUST include:
   * `command`: what to execute
   * `script`: given as stdin to the command
 
-It is recommended to also have `os`
+It is recommended to also have `os` and a `description`
 
 ## example taskfile
 
