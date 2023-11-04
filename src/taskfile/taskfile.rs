@@ -12,7 +12,7 @@ pub struct TaskDefinition {
     pub name: Option<String>,
     pub command: String,
     pub script: String,
-
+    pub description: Option<String>
 }
 
 impl TaskDefinition {

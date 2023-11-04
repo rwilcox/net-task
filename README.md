@@ -48,6 +48,7 @@ externals:
 name: local_tasks
 tasks:
   doit:
+    description: say hello
     os: any
     command: python3
     script: |
