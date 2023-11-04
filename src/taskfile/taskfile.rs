@@ -3,10 +3,8 @@ use std::process::{Command, Stdio, ExitStatus};
 use std::io::{self, Write};
 use ureq;
 
-use std::path::Path;
+use std::path::PathBuf;
 use std::fs;
-
-use url::Url;
 
 #[derive(Debug, Deserialize)]
 pub struct TaskDefinition {
@@ -94,7 +92,8 @@ fn external_definition<'de, D>(des: D) -> Result<Taskfiles, D::Error> where
                 if (location.starts_with("http")) {
                     externals.push(Box::new(Taskfile::new_from_url(location)))
                 } else {
-                        externals.push(Box::new(Taskfile::new_from_file(location)));
+                    let file_path = PathBuf::from(location);
+                        externals.push(Box::new(Taskfile::new_from_file(file_path)));
                     }
             }
 
