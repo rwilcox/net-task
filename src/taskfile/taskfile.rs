@@ -1,12 +1,12 @@
 use serde::Deserialize;
 use std::process::{Command, Stdio, ExitStatus};
-use std::io::{self, Write};
+use std::io::{Write};
 use ureq;
 
 use std::path::PathBuf;
 use std::fs;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct TaskDefinition {
     pub os: Option<String>,
     pub name: Option<String>,
@@ -89,7 +89,7 @@ fn external_definition<'de, D>(des: D) -> Result<Taskfiles, D::Error> where
         {
             let mut externals = Taskfiles::new();
             while let Some(location) = seq.next_element::<String>()? {
-                if (location.starts_with("http")) {
+                if location.starts_with("http") {
                     externals.push(Box::new(Taskfile::new_from_url(location)))
                 } else {
                     let file_path = PathBuf::from(location);
@@ -106,7 +106,7 @@ fn external_definition<'de, D>(des: D) -> Result<Taskfiles, D::Error> where
 }
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Taskfile {
     pub version: String,
 
