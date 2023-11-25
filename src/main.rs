@@ -27,7 +27,9 @@ struct Cli {
 enum Commands {
     /// lists all availiable tasks
     List,
-    Run
+    Run {
+        command_name: String
+    }
 }
 
 
@@ -37,7 +39,8 @@ enum Commands {
 ///
 /// # Arguments
 /// * `taskfiles` - Taskfiles to iterate over
-/// * `callback_closure` - A mutable closure that takes a reference to a `TaskDefinition` object, called for every task this iterator encounters. If the closure returns false the iteration is STOPPED
+/// * `callback_closure` - A mutable closure that takes a reference to a `TaskDefinition` object, called
+/// for every task this iterator encounters. If the closure returns false the iteration is STOPPED
 fn taskfile_iterator<F>(taskfiles: &Vec<Box<Taskfile>>,
                      mut callback_closure: F) where F: FnMut(&TaskDefinition) -> bool {
 
@@ -52,7 +55,7 @@ fn taskfile_iterator<F>(taskfiles: &Vec<Box<Taskfile>>,
 
     let externals: Vec<Box<Taskfile>> = taskfiles.iter().flat_map( |x| { x.externals.clone()}).collect();
 
-    if externals.len() > 0 {
+    if !externals.is_empty() {
         taskfile_iterator(&externals, callback_closure);
     }
 }
@@ -82,12 +85,17 @@ fn main() {
             table.printstd();
         }
 
-        Commands::Run => {
-            println!("run called!")
+        Commands::Run { command_name } => {
+            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(PathBuf::from("./net-task.yml")));
+            let b = Box::new(task_list);
+            taskfile_iterator(&vec![b], |x| -> bool {
+                if x.name.as_ref().unwrap() == command_name {
+                    x.run();
+                    false
+                } else {
+                    true
+                }
+            });
         }
     }
-    // let tf = Taskfile::new_from_file("./net-task.yml".to_string());
-
-    // let _res = tf.tasks.first().expect("no tasks given").run();
-    // println!("{:?}", tf);
 }
