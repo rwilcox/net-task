@@ -18,6 +18,25 @@ Likewise, what if the standard "lint:fix" script doesn't work for your team? You
   * How can you let your teams override organization standard tasks? (while maybe forcing the standard version to run)? (Answer: Net-task!)
   * How can you do all this in the lightest way possible, across languages? (A: net-task!)
 
+## Alternatives
+
+Alternatives that are cross-platform, language indepedent, can be easily installed, and doesn't conflate building artifacts _neccisarily_ with running tasks. (Sorry, [Gradle](https://gradle.org/))
+
+### Cargo-Make
+
+[cargo-make](https://github.com/sagiegurari/cargo-make) is neat! Auto convert shell scripts neat; basic extending and modification, and complex. Written in Rust too, and can integrate with `cargo`, or work standalone
+
+### Just
+
+[just](https://github.com/casey/just) more closely echos the semantics of Make. Even includes built in functions, and allows inclusion of additional files.
+
+### Task
+
+[task](https://taskfile.dev/) is _extremely_ similar to net-task (including the YAML and the remote file path), and you should probably use that, honestly, if you're looking for simplicity.
+
+I didn't actually know about Task when I started work on this. But net-task is my learning Rust project, so, _nerds_.
+
+
 # Use Cases
 
   * in a multiple repo situation, put a base taskfile on (some https accessible endpoint) and point multiple repos at it, to propegate tools across your microservice herd
