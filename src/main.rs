@@ -29,6 +29,10 @@ enum Commands {
     List,
     Run {
         command_name: String
+    },
+    /// like run but prints out the script source for the found item
+    Print {
+        command_name: String
     }
 }
 
@@ -91,6 +95,20 @@ fn main() {
             taskfile_iterator(&vec![b], |x| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
                     x.run();
+                    false
+                } else {
+                    true
+                }
+            });
+        }
+
+        Commands::Print { command_name } => {
+            // does everything run does but prints the found command
+let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(PathBuf::from("./net-task.yml")));
+            let b = Box::new(task_list);
+            taskfile_iterator(&vec![b], |x| -> bool {
+                if x.name.as_ref().unwrap() == command_name {
+                    println!("{}", x.script.trim());
                     false
                 } else {
                     true
