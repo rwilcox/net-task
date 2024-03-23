@@ -1,35 +1,9 @@
-use serde::Deserialize;
-use std::process::{Command, Stdio, ExitStatus};
-use std::io::{Write};
 use ureq;
-
+use serde::Deserialize;
 use std::path::PathBuf;
 use std::fs;
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct TaskDefinition {
-    pub os: Option<String>,
-    pub name: Option<String>,
-    pub command: String,
-    pub script: String,
-    pub description: Option<String>
-}
-
-impl TaskDefinition {
-    pub fn run(&self) -> ExitStatus {
-        let mut run_task = Command::new(self.command.clone())
-            .stdin(Stdio::piped())
-            .spawn()
-            .unwrap();
-        let _ = run_task.stdin.as_mut()
-            .ok_or("Child process stdin has not been captured!").unwrap()
-            .write_all(self.script.clone().as_bytes());
-
-        let output = run_task.wait_with_output();
-        //println!("{:?}", output);
-        return output.unwrap().status;
-    }
-}
+ use crate::taskfile::taskdefinition::TaskDefinition;
 
 /// we want to allow the user to give us YAML hashlike syntax but turn it into an array
 /// mostly from https://stackoverflow.com/a/72947051/224334

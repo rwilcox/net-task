@@ -1,6 +1,8 @@
 #[macro_use] extern crate prettytable;
 
-use crate::taskfile::taskfile::{Taskfile, TaskDefinition};
+use crate::taskfile::taskfile::Taskfile;
+use crate::taskfile::taskdefinition::TaskDefinition;
+
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use prettytable::{Table};

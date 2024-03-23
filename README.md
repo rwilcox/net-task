@@ -54,7 +54,9 @@ A task definition MUST include:
   * `command`: what to execute
   * `script`: given as stdin to the command
 
-It is recommended to also have `os` and a `description`
+It is recommended to also have `os` and a `description`.
+
+It MAY have a `as_tempfile` attribute. Instead of passing the `script` to `command` via stdin, this will make a tempfile then call `command` passing the temp file as the first parameter.
 
 ## example taskfile
 
