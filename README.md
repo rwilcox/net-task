@@ -50,11 +50,17 @@ Each taskfile MUST have:
   * `tasks` <-- a map of names and their task information
   * `externals` <-- an optional list of URLs where additional taskfiles live
 
-A task definition MUST include:
+A task definition MUST include one of:
   * `command`: what to execute
-  * `script`: given as stdin to the command
+  * `script`: what to run
+
+OR
+  * `shell`: if you use this net-task will run the text against Bash
+
 
 It is recommended to also have `os` and a `description`.
+
+os can be `any` or `unix` or any [item in the Rust OS constants list](https://doc.rust-lang.org/1.77.2/std/env/consts/constant.OS.html)
 
 It MAY have a `as_tempfile` attribute. Instead of passing the `script` to `command` via stdin, this will make a tempfile then call `command` passing the temp file as the first parameter.
 

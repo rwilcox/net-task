@@ -25,10 +25,13 @@ fn tasks_definition<'de, D>(des: D) -> Result<Vec<TaskDefinition>, D::Error> whe
                 item.name = Some(name);
                 let os = item.os.clone().unwrap_or("any".to_string());
                 let anys = "any".to_string();
+
+                let unix_like = ["linux", "freebsd", "macos", "openbsd", "netbsd"];
                 let current_os = std::env::consts::OS;
 
                 let can_be_executed = match os {
                     _ if os == anys => true,
+                    _ if (os == "unix".to_string() && (unix_like.contains(&current_os)))  => true,
                     _ if os == current_os => true,
                     _ => false,
                 };

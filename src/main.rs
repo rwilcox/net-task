@@ -110,7 +110,7 @@ let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(PathBuf::from("./
             let b = Box::new(task_list);
             taskfile_iterator(&vec![b], |x| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
-                    println!("{}", x.script.trim());
+                    println!("{}", x.get_script().trim());
                     false
                 } else {
                     true

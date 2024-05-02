@@ -20,16 +20,26 @@ fn create_temp_file(contents: String) -> Result<String, std::io::Error> {
 pub struct TaskDefinition {
     pub os: Option<String>,
     pub name: Option<String>,
-    pub command: String,
-    pub script: String,
+    pub command: Option<String>,
+    pub script: Option<String>,
+    pub shell: Option<String>,
     pub description: Option<String>,
     pub as_tempfile: Option<bool>
 }
 
 
 impl TaskDefinition {
+    pub fn get_command(&self) -> String {
+        // TODO: maybe use the OS field to default to Powershell on win??
+        self.command.clone().or(Some("/bin/bash".to_string())).unwrap()
+    }
+
+    pub fn get_script(&self) -> String {
+        self.script.clone().or(self.shell.clone()).unwrap()
+    }
+
     pub fn run(&self) -> ExitStatus {
-        let mut run_task = Command::new(self.command.clone());
+        let mut run_task = Command::new(self.get_command());
 
         let needs_tempfile = self.as_tempfile.unwrap_or(false);
         let child_task = if !needs_tempfile {
@@ -37,10 +47,10 @@ impl TaskDefinition {
             let mut child_task = run_task.spawn().unwrap();
             let _ = child_task.stdin.as_mut()
                 .ok_or("Child process stdin has not been captured!").unwrap()
-                .write_all(self.script.clone().as_bytes());
+                .write_all(self.get_script().as_bytes());
             child_task
         } else {
-            let tmpfile = create_temp_file(self.script.clone());
+            let tmpfile = create_temp_file(self.get_script());
             run_task.arg(tmpfile.expect("Error when unwrapping tmp file"));
 
             run_task.spawn().unwrap()
