@@ -1,0 +1,19 @@
+version: 1
+name: base-tasks
+tasks:
+  base:
+    description: say hello, world
+    os: any
+    command: python3
+    script: |
+      print("this is from the base")
+  os_selector:
+    os: windows
+    command: cmd.exe
+    script: |
+      dir
+  os_selector:
+    description: "os selector, mac version"
+    os: unix
+    command: /bin/bash
+    script: ls
