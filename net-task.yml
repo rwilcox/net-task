@@ -1,0 +1,18 @@
+version: 1
+name: build_tasks
+externals:
+  - ./net-task-base.yml
+tasks:
+  checkpoint-build:
+    os: any
+    description: save debug build to bin, so I can use net-task while building net-task
+    command: /bin/bash
+    script: cp target/debug/net-task ~/bin/net-task
+  which-debug:
+    os: any
+    description: where does that build get saved to?
+    command: /bin/bash
+    script: echo "target/debug/net-task"
+  build:
+    os: unix
+    shell: cargo build
