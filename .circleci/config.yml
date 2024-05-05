@@ -7,7 +7,7 @@ jobs:
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/rust:current
+      - image: cimg/rust:1.73.0
 
     steps:
       # Checkout the code as the first step.
