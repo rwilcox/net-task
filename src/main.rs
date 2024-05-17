@@ -96,8 +96,8 @@ fn main() {
             let b = Box::new(task_list);
             taskfile_iterator(&vec![b], |x| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
-                    x.run();
-                    false
+                    std::process::exit(x.run().code().expect("exit code for child process not found"));
+                    // false
                 } else {
                     true
                 }
