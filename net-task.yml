@@ -16,3 +16,21 @@ tasks:
   build:
     os: unix
     shell: cargo build
+  build:release:
+    os: any
+    shell: cargo build --release
+  bad:
+    shell: exit 1
+  ci:upload-binary:
+    os: unix
+    shell: |
+      set -e
+
+      net-task run build:release
+
+      # see https://github.com/rwilcox/codenarc-cli/blob/master/build-scripts/release.sh
+      #token=$(git config  github.token)
+      #user=rwilcox
+      #repo=net-task
+      #
+      #npx publish-release --token=$token --owner=$user --repo=$repo --tag=$1 --assets=target/codenarc-wrapper.jar --notes="$text" --name=$tag
