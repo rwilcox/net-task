@@ -100,8 +100,10 @@ pub struct Taskfile {
     pub externals: Taskfiles,
 
     pub from_file: Option<String>,
+    pub name: String,
 
-    pub name: String
+    // notes the file location, if this is a file based taskfile
+    file_location: Option<PathBuf>
 }
 
 impl Taskfile {
@@ -112,13 +114,18 @@ impl Taskfile {
 
         let in_str = fs::read_to_string(fpath).expect("Unable to read given file");
 
-        Taskfile::new_from_string(in_str, filepath.to_str().unwrap().to_string())
+        // TODO: is the external filepath relative to the CWD or relative to the
+        // TODO: found taskfile? (Or not relative at all and externals are NAMES
+        // TODO: not file path references?
+        let mut out = Taskfile::new_from_string(in_str, filepath.to_str().unwrap().to_string());
+        out.file_location = Some(filepath);
+        out
     }
 
-    pub fn new_from_string(in_str: String, location: String) -> Taskfile {
-        let mut output: Taskfile = serde_yaml::from_str(&in_str).expect("could not parse file");
-        output.from_file = Some(location);
-        return output
+    pub fn new_from_string(in_str: String, _location: String) -> Taskfile {
+        let output: Taskfile = serde_yaml::from_str(&in_str).expect("could not parse file");
+
+        output
     }
 
     pub fn new_from_url(extend_url_str: String) -> Taskfile {
@@ -128,4 +135,12 @@ impl Taskfile {
         Taskfile::new_from_string(body, extend_url_str)
     }
 
+    pub fn get_location_folder(&self) -> Option<PathBuf> {
+        if self.file_location.is_some() {
+            let fl = self.file_location.clone().unwrap();
+            Some(fl.parent().unwrap().to_path_buf())
+        } else {
+            None
+        }
+    }
 }

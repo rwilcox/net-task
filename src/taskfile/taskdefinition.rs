@@ -2,6 +2,7 @@ use serde::Deserialize;
 
 use std::process::{Command, Stdio, ExitStatus};
 use std::io::{Write};
+use crate::taskfile::taskfile::Taskfile;
 
 use tempfile::NamedTempFile;
 
@@ -38,8 +39,13 @@ impl TaskDefinition {
         self.script.clone().or(self.shell.clone()).unwrap()
     }
 
-    pub fn run(&self) -> ExitStatus {
+    pub fn run(&self, parent_taskfile: &Taskfile) -> ExitStatus {
         let mut run_task = Command::new(self.get_command());
+        let taskfile_dir = parent_taskfile.get_location_folder();
+
+        if taskfile_dir.is_some() {
+            run_task.current_dir(taskfile_dir.unwrap());
+        }
 
         let needs_tempfile = self.as_tempfile.unwrap_or(false);
         let child_task = if !needs_tempfile {
