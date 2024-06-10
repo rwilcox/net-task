@@ -13,6 +13,9 @@ tasks:
     description: where does that build get saved to?
     command: /bin/bash
     script: echo "target/debug/net-task"
+  list:todos:
+    description: finds TODO lines
+    shell: rg TODO .
   build:
     os: unix
     shell: cargo build
