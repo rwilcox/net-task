@@ -43,9 +43,11 @@ impl TaskDefinition {
         let mut run_task = Command::new(self.get_command());
         let taskfile_dir = parent_taskfile.get_location_folder();
 
-        if taskfile_dir.is_some() {
-            run_task.current_dir(taskfile_dir.unwrap());
-        }
+        let user_current_dir = std::env::current_dir().expect("could not get CWD");
+        run_task.current_dir(taskfile_dir.unwrap_or(user_current_dir.clone()));
+
+        run_task.env("NET_TASK_USER_CURRENT_DIRECTORY", user_current_dir);
+        run_task.env("NET_TASK", std::env::current_exe().expect("could not get binary location"));
 
         let needs_tempfile = self.as_tempfile.unwrap_or(false);
         let child_task = if !needs_tempfile {
