@@ -18,7 +18,12 @@ tasks:
     shell: rg TODO .
   build:
     os: unix
-    shell: cargo build
+    shell: |
+      set -e
+
+      GIT_REV=$(git rev-parse --short HEAD) \
+      perl -pi -e 's/^.*version = "(\d+(\.\d+){1,2})\-.......".*# AUTO-GENERATED.*$/version = \"$1-$ENV{'GIT_REV'}\"  # AUTO-GENERATED/' Cargo.toml
+      cargo build
   build:release:
     os: any
     shell: cargo build --release
