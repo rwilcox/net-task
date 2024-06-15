@@ -16,13 +16,23 @@ tasks:
   list:todos:
     description: finds TODO lines
     shell: rg TODO .
-  build:
+  build:include-git-sha-in-version:
     os: unix
+    description: When developing and doing checkpoint builds I want to know what version I'm really running
+    shell: |
+      echo "incrementing version in Cargo.toml..."
+      # first modify the version in cargo.toml so we can identify what version we're running
+      # (may only be for early development versions of this)
+      GIT_REV=$(git rev-parse --short HEAD) \
+      perl -pi -e 's/^.*version = "(\d+(\.\d+){1,2})\-.......".*# AUTO-GENERATED.*$/version = \"$1-$ENV{'GIT_REV'}\"  # AUTO-GENERATED/' Cargo.toml
+  build:
+    os: any
     shell: |
       set -e
 
-      GIT_REV=$(git rev-parse --short HEAD) \
-      perl -pi -e 's/^.*version = "(\d+(\.\d+){1,2})\-.......".*# AUTO-GENERATED.*$/version = \"$1-$ENV{'GIT_REV'}\"  # AUTO-GENERATED/' Cargo.toml
+      $NET_TASK run build:include-git-sha-in-version
+
+      # now build it
       cargo build
   build:release:
     os: any
@@ -34,7 +44,7 @@ tasks:
     shell: |
       set -e
 
-      net-task run build:release
+      $NET_TASK run build:release
 
       # see https://github.com/rwilcox/codenarc-cli/blob/master/build-scripts/release.sh
       #token=$(git config  github.token)
