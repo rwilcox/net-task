@@ -97,7 +97,11 @@ fn find_file_upwards(file_name: &str) -> Option<PathBuf> {
 
 fn main() {
     let cli = Cli::parse();
-    let task_file = find_file_upwards("net-task.yml").expect("no net-task.yml file found");
+
+    let task_file =
+        cli.taskfile.clone().unwrap_or_else(||
+                                    find_file_upwards("net-task.yml").expect("no net-task.yml file found")
+                                    );
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
