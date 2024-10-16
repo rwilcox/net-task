@@ -83,3 +83,11 @@ tasks:
 
 
 ```
+
+# Providers
+
+## Shell
+
+Introduces the following environmental variables for you:
+  * `NET_TASK_USER_CURRENT_DIRECTORY`: the user's current working directory (scripts will be executed from the net-task.yml's location)
+  * `NET_TASK` path to the net-task binary currently running
