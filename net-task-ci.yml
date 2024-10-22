@@ -19,10 +19,11 @@ tasks:
     os: unix
     shell: |
       set -e
+
       # $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
       VERSION=$($NET_TASK run build:get-current-version)
       TITLE="Release $VERSION"
-      gh release create --repo rwilcox/net-task $VERSION --title=$TITLE --generate-notes -d
+      gh release create --repo rwilcox/net-task $VERSION --title="$TITLE" --generate-notes -d
 
   ci:create-arch-tagged-release:
     os: unix
