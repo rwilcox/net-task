@@ -36,7 +36,7 @@ jobs:
           command: tmp/net-task -t ./net-task-ci.yml run ci:create-arch-tagged-release
       - run:
           name: temp move binary over
-          command: tmp/net-task target/net-task/net-task-tmp
+          command: mv tmp/net-task target/net-task/net-task-tmp
       - persist_to_workspace:
           root: target/net-task
           paths:
