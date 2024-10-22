@@ -9,15 +9,16 @@ commands:
           name: Build
           command: cargo build
       - run:
+          # TODO: make this run a useful thing
+          name: test build
+          command: bash test/test.sh
+      - run:
           name: move build to useful place
           command: |
             mkdir tmp/
             mv target/debug/net-task tmp/
       # TODO: we want to bootstrap this way, or not??
-      - run:
-          # TODO: make this run a useful thing
-          name: test build
-          command: bash test/test.sh
+
 
 jobs:
   build:
