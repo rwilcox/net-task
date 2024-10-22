@@ -40,9 +40,12 @@ tasks:
 
       # gives us ie Darwin_arm64 or whatever
       BUILD_INFO="${RELEASE_VERSION}_$(uname -o | cut -d'/' -f2)_$(uname -m)"
-      ARCHIVE_NAME="target/net-task_${BUILD_INFO}.tar.gz"
+      mkdir -p target/net-task
+      ARCHIVE_NAME="target/net-task/net-task_${BUILD_INFO}.tar.gz"
       tar -czf $ARCHIVE_NAME -C target/net-task/ net-task
+      rm target/net-task/net-task # only .tar.gz etc files here
       echo $ARCHIVE_NAME > target/archive_name
+      echo "done creating architecture specific .tar.gz files"
 
   ci:gh:upload-binary:
     os: unix
