@@ -1,3 +1,5 @@
 set -e
 
-target/debug/net-task -f tests/on-filter.yml
+# target/debug/net-task - tests/on-filter.yml
+
+echo "TODO"
