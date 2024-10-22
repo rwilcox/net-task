@@ -38,6 +38,9 @@ jobs:
           command: tmp/net-task target/net-task/net-task-tmp
       - persist_to_workspace:
           root: target/net-task
+          paths:
+            - net-task-tmp
+            - net-task_*
 
   release:
     docker:
