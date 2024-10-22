@@ -56,9 +56,11 @@ jobs:
           at: built-binaries
       - run:
           name: authorize
-          command: |
-            built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
-            # gh --help
+          command: built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
+      - run:
+          name: upload binaries
+          command: built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:upload-binary
+
 
 
 # Orchestrate jobs using workflows

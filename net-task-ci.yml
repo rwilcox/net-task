@@ -21,7 +21,7 @@ tasks:
       set -e
       TITLE="huh"  # TODO: fix me!!!
 
-      $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
+      # $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
       VERSION=$($NET_TASK run build:get-current-version)
       gh release create --repo rwilcox/net-task $VERSION --title=$TITLE --generate-notes -d
 
@@ -55,7 +55,7 @@ tasks:
       set -x
 
       # dependencies
-      $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
+      #$NET_TASK -t ./net-task-ci.yml run ci:gh:auth
 
       # let CI ? take care of creating the release
       RELEASE_TAG=$(gh release list --json name --json isDraft --json tagName --jq '.[] | select(.isDraft == true) | .tagName')
@@ -65,14 +65,14 @@ tasks:
         exit 0
       fi
 
-      if [ ! -e target/archive_name ]; then
-        echo "target/archive_name does not exist, running command to generate same"
-        $NET_TASK -t ./net-task-ci.yml run ci:create-arch-tagged-release
-      fi
+      #if [ ! -e target/archive_name ]; then
+      #  echo "target/archive_name does not exist, running command to generate same"
+      #  $NET_TASK -t ./net-task-ci.yml run ci:create-arch-tagged-release
+      #fi
+      #
+      #RELEASE_PATH=$(<target/archive_name)
 
-      RELEASE_PATH=$(<target/archive_name)
-
-      gh release upload $RELEASE_TAG $RELEASE_PATH
+      gh release upload $RELEASE_TAG built-binaries/net-task/net-task_*
 
       # alternatively we could have used npx publish-release
       # example: https://github.com/rwilcox/codenarc-cli/blob/master/build-scripts/release.sh
