@@ -55,6 +55,9 @@ jobs:
       - attach_workspace:
           at: built-binaries
       - run:
+          name: huh
+          command: ls built-binaries/net-ta*
+      - run:
           name: authorize
           command: built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
       - run:
