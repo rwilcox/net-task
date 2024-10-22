@@ -39,7 +39,7 @@ tasks:
       mv target/release/net-task target/net-task/net-task
 
       # gives us ie Darwin_arm64 or whatever
-      BUILD_INFO="${RELEASE_VERSION}_$(uname -o)_$(uname -m)"
+      BUILD_INFO="${RELEASE_VERSION}_$(uname -o | cut -d'/' -f2)_$(uname -m)"
       ARCHIVE_NAME="target/net-task_${BUILD_INFO}.tar.gz"
       tar -czf $ARCHIVE_NAME -C target/net-task/ net-task
       echo $ARCHIVE_NAME > target/archive_name
