@@ -52,25 +52,20 @@ tasks:
     description: upload the binary to the latest draft Release
     shell: |
       set -e
-      set -x
 
-      # dependencies
-      #$NET_TASK -t ./net-task-ci.yml run ci:gh:auth
+      # users need to manually run the following dependencies at some time:
+      #   * ci:gh:auth
+      #   * ci:create-arch-tagged-release
 
-      # let CI ? take care of creating the release
+      # let CI take care of creating the release
+      # that is the control on if we want uploads to happen: if there is a
+      # draft Release
       RELEASE_TAG=$(gh release list --json name --json isDraft --json tagName --jq '.[] | select(.isDraft == true) | .tagName')
 
       if [ -z $RELEASE_TAG ]; then
         echo "no release tag, assuming not releasable in current state"
         exit 0
       fi
-
-      #if [ ! -e target/archive_name ]; then
-      #  echo "target/archive_name does not exist, running command to generate same"
-      #  $NET_TASK -t ./net-task-ci.yml run ci:create-arch-tagged-release
-      #fi
-      #
-      #RELEASE_PATH=$(<target/archive_name)
 
       gh release upload $RELEASE_TAG built-binaries/net-task/net-task_*
 

@@ -54,13 +54,10 @@ jobs:
       - attach_workspace:
           at: built-binaries
       - run:
-          name: huh
-          command: ls built-binaries/net-task/
-      - run:
-          name: authorize
+          name: github authorize
           command: built-binaries/net-task/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
       - run:
-          name: upload binaries
+          name: upload binaries to release (optional)
           command: built-binaries/net-task/net-task-tmp -t ./net-task-ci.yml run ci:gh:upload-binary
 
 
