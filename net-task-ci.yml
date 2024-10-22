@@ -7,7 +7,7 @@ tasks:
     description: authorize
     os: unix
     shell: |
-      echo "$GH_BOT_KEY_B64" | base64 -d > /tmp/gh-token
+      echo "$GH_BOT_KEY" > /tmp/gh-token
       if [ ! -f /tmp/gh-token ]; then
         echo "File /tmp/gh-token does not exist. Exiting."
         exit 1
