@@ -25,6 +25,11 @@ tasks:
       # (may only be for early development versions of this)
       GIT_REV=$(git rev-parse --short HEAD) \
       perl -pi -e 's/^.*version = "(\d+(\.\d+){1,2})\-.......".*# AUTO-GENERATED.*$/version = \"$1-$ENV{'GIT_REV'}\"  # AUTO-GENERATED/' Cargo.toml
+  build:get-current-version:
+    os: unix
+    description: get version number defined in cargo.toml (no SHA-1 hashes)
+    shell: |
+      perl -ne 'if (/^.*version = "(\d+(\.\d+){1,2})\-.......".*# AUTO-GENERATED.*$/) { print "$1\n"}' Cargo.toml
   build:
     os: any
     shell: |
@@ -39,16 +44,3 @@ tasks:
     shell: cargo build --release
   bad:
     shell: exit 1
-  ci:upload-binary:
-    os: unix
-    shell: |
-      set -e
-
-      $NET_TASK run build:release
-
-      # see https://github.com/rwilcox/codenarc-cli/blob/master/build-scripts/release.sh
-      #token=$(git config  github.token)
-      #user=rwilcox
-      #repo=net-task
-      #
-      #npx publish-release --token=$token --owner=$user --repo=$repo --tag=$1 --assets=target/codenarc-wrapper.jar --notes="$text" --name=$tag

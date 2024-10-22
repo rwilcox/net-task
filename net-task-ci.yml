@@ -1,0 +1,79 @@
+version: 1
+name: build_tasks
+externals:
+  - ./net-task.yml
+tasks:
+  ci:gh:auth:
+    description: authorize
+    os: unix
+    shell: |
+      echo "$GH_BOT_KEY_B64" | base64 -d > /tmp/gh-token
+      if [ ! -f /tmp/gh-token ]; then
+        echo "File /tmp/gh-token does not exist. Exiting."
+        exit 1
+      fi
+      gh auth login --with-token < /tmp/gh-token
+      rm /tmp/gh-token
+  ci:gh:create-release-draft:
+    description: Create a Draft release for binary uploads
+    os: unix
+    shell: |
+      set -e
+      TITLE="huh"  # TODO: fix me!!!
+
+      $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
+      VERSION=$($NET_TASK run build:get-current-version)
+      gh release create --repo rwilcox/net-task $VERSION --title=$TITLE --generate-notes -d
+
+  ci:create-arch-tagged-release:
+    os: unix
+    description: create a .tar.gz arch specific release
+    shell: |
+      set -e
+
+      # dependencies
+      $NET_TASK run build:release
+      RELEASE_VERSION=$($NET_TASK run build:get-current-version)
+
+      mkdir -p target/net-task
+      mv target/release/net-task target/net-task/net-task
+
+      # gives us ie Darwin_arm64 or whatever
+      BUILD_INFO="${RELEASE_VERSION}_$(uname -o)_$(uname -m)"
+      ARCHIVE_NAME="target/net-task_${BUILD_INFO}.tar.gz"
+      tar -czf $ARCHIVE_NAME -C target/net-task/ net-task
+      echo $ARCHIVE_NAME > target/archive_name
+
+  ci:gh:upload-binary:
+    os: unix
+    description: upload the binary to the latest draft Release
+    shell: |
+      set -e
+      set -x
+
+      # dependencies
+      $NET_TASK -t ./net-task-ci.yml run ci:gh:auth
+
+      # let CI ? take care of creating the release
+      RELEASE_TAG=$(gh release list --json name --json isDraft --json tagName --jq '.[] | select(.isDraft == true) | .tagName')
+
+      if [ -z $RELEASE_TAG ]; then
+        echo "no release tag, assuming not releasable in current state"
+        exit 0
+      fi
+
+      if [ ! -e target/archive_name ]; then
+        echo "target/archive_name does not exist, running command to generate same"
+        $NET_TASK -t ./net-task-ci.yml run ci:create-arch-tagged-release
+      fi
+
+      RELEASE_PATH=$(<target/archive_name)
+
+      gh release upload $RELEASE_TAG $RELEASE_PATH
+
+      # alternatively we could have used npx publish-release
+      # example: https://github.com/rwilcox/codenarc-cli/blob/master/build-scripts/release.sh
+      # but the GH CLI feels like it will be more maintained
+      # now upload the currently built file
+      # using gh subcommands
+      # WD-rpw 10/17/2024

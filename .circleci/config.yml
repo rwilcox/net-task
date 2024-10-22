@@ -2,6 +2,23 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+commands:
+  build-and-test-unix-like:
+    steps:
+      - run:
+          name: Build
+          command: cargo build
+      - run:
+          name: move build to useful place
+          command: |
+            mkdir tmp/
+            mv target/debug/net-task tmp/
+      # TODO: we want to bootstrap this way, or not??
+      - run:
+          # TODO: make this run a useful thing
+          name: test build
+          command: test/test.sh
+
 jobs:
   build:
     docker:
@@ -12,17 +29,26 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
+      - build-and-test-unix-like
       - run:
-          name: Build
-          command: cargo build
+          name: build release package
+          command: tmp/net-task -t ./net-task-ci.yml run ci:create-arch-tagged-release
       - run:
-          name: move build to useful place
-          command: |
-            mkdir tmp/
-            mv target/debug/net-task tmp/
+          name: temp move binary over
+          command: tmp/net-task target/net-task/net-task-tmp
+      - persist_to_workspace:
+          root: target/net-task
+
+  release:
+    docker:
+      - image: cimg/rust:1.73.0
+    steps:
+      - attach_workspace:
+          at: built-binaries
       - run:
-          name: test build
-          command: tmp/net-task run os_selector
+          name: test
+          command: ls target/net-task/built-binaries
+
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
@@ -30,3 +56,6 @@ workflows:
   feature-branch-test:
     jobs:
       - build
+      - release:
+          context:
+            - github
