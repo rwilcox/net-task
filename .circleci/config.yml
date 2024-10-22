@@ -51,7 +51,7 @@ jobs:
           at: built-binaries
       - run:
           name: test
-          command: ls target/net-task/built-binaries
+          command: ls
 
 
 # Orchestrate jobs using workflows
