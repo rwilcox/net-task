@@ -51,7 +51,7 @@ jobs:
           at: built-binaries
       - run:
           name: test
-          command: ls
+          command: ls built-binaries/
 
 
 # Orchestrate jobs using workflows
