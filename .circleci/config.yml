@@ -43,8 +43,6 @@ jobs:
             - net-task_*
 
   release:
-    requires:
-      - build
     docker:
       - image: cimg/rust:1.73.0
     steps:
@@ -62,5 +60,7 @@ workflows:
     jobs:
       - build
       - release:
+          requires:
+            - build
           context:
             - github
