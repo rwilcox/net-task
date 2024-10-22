@@ -57,8 +57,8 @@ jobs:
       - run:
           name: authorize
           command: |
-            # built-binaries/net-task-tmp --help
-            gh --help
+            built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
+            # gh --help
 
 
 # Orchestrate jobs using workflows
