@@ -39,9 +39,8 @@ jobs:
           name: temp move binary over
           command: mv tmp/net-task target/net-task/net-task-tmp
       - persist_to_workspace:
-          root: target/net-task
+          root: target/
           paths:
-            - net-task-tmp
             - net-task/
 
   release:
@@ -56,7 +55,7 @@ jobs:
           at: built-binaries
       - run:
           name: huh
-          command: ls built-binaries/net-ta*
+          command: ls built-binaries/net-task/
       - run:
           name: authorize
           command: built-binaries/net-task-tmp -t ./net-task-ci.yml run ci:gh:auth
