@@ -13,6 +13,3 @@ ureq = "2.7.1"
 clap = { version = "4.3.19", features = ["derive"]}
 prettytable-rs = "^0.10"
 tempfile = "3.10.1"
-
-[profile.release]
-lto = true
