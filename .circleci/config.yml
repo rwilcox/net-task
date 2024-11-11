@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run:
           name: download unknown linux
-          command: rustup target add x86_64-unknown-linux-gnu
+          command: rustup target add x86_64-unknown-linux-musl
       - build-and-test-unix-like
       - run:
           name: build release package
