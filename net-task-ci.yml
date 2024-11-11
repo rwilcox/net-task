@@ -36,6 +36,7 @@ tasks:
       RELEASE_VERSION=$($NET_TASK run build:get-current-version)
 
       mkdir -p target/net-task
+      ls target/release
       mv target/release/net-task target/net-task/net-task
 
       # gives us ie Darwin_arm64 or whatever
