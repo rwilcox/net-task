@@ -36,8 +36,8 @@ tasks:
       RELEASE_VERSION=$($NET_TASK run build:get-current-version)
 
       mkdir -p target/net-task
-      ls target/release
-      mv target/release/net-task target/net-task/net-task
+      RELEASE_PATH="x86_64-unknown-linux-gnu/release"
+      mv target/$RELEASE_PATH/net-task target/net-task/net-task
 
       # gives us ie Darwin_arm64 or whatever
       BUILD_INFO="${RELEASE_VERSION}_$(uname -o | cut -d'/' -f2)_$(uname -m)"
