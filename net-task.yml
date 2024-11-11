@@ -41,6 +41,6 @@ tasks:
       cargo build
   build:release:
     os: linux
-    shell: cargo build --release --target x86_64-unknown-linux-musl
+    shell: cargo build --release
   bad:
     shell: exit 1

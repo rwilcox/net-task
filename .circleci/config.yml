@@ -31,9 +31,9 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
-      - run:
-          name: download unknown linux
-          command: rustup target add x86_64-unknown-linux-musl
+      #- run:
+      #    name: download unknown linux
+      #    command: rustup target add x86_64-unknown-linux-musl
       - build-and-test-unix-like
       - run:
           name: build release package
