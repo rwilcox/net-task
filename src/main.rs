@@ -28,7 +28,10 @@ struct Cli {
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// lists all availiable tasks
-    List,
+    List {
+        /// shows only tasks that start with the given pattern
+        pattern_name: Option<String>
+    },
     Run {
         command_name: String
     },
@@ -106,9 +109,10 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Commands::List => {
+        Commands::List { pattern_name } => {
 
             let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file));
+
             let mut table = Table::new();
 
             // NOTE: this styling does not work in eshell, but works everywhere else...
@@ -118,7 +122,19 @@ fn main() {
             taskfile_iterator(&vec![b], |x, _in_taskfile| -> bool {
                 let task_name = x.name.clone().unwrap_or("UNKNOWN".to_string());
                 let description = x.description.clone().unwrap_or(" ".to_string());
-                table.add_row(row![task_name, description]);
+                let mut add_to_row = true;
+
+                if pattern_name.is_some() {
+                    // TODO: make this fancy
+
+                    // for now if there's a star at the end of the string - habit - drop it
+                    let pattern = pattern_name.as_ref().unwrap().trim_end_matches('*');
+                    add_to_row =  task_name.starts_with(pattern)
+                }
+
+                if add_to_row {
+                        table.add_row(row![task_name, description]);
+                }
                 true
             });
 
