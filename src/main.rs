@@ -3,7 +3,7 @@
 use crate::taskfile::taskfile::Taskfile;
 use crate::taskfile::taskdefinition::TaskDefinition;
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ArgAction};
 use std::path::{PathBuf};
 use prettytable::{Table};
 use std::env;
@@ -30,7 +30,9 @@ enum Commands {
     /// lists all availiable tasks
     List {
         /// shows only tasks that start with the given pattern
-        pattern_name: Option<String>
+        pattern_name: Option<String>,
+        #[clap(long, help = "Plain print the output", action = ArgAction::SetTrue)]
+        plain: Option<bool>
     },
     Run {
         command_name: String
@@ -109,8 +111,7 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Commands::List { pattern_name } => {
-
+        Commands::List { pattern_name, plain } => {
             let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file));
 
             let mut table = Table::new();
@@ -133,12 +134,17 @@ fn main() {
                 }
 
                 if add_to_row {
-                        table.add_row(row![task_name, description]);
+                    table.add_row(row![task_name, description]);
+                    if plain.unwrap_or(false) {
+                        println!("{}", task_name)
+                    }
                 }
                 true
             });
 
-            table.printstd();
+            if !(plain.unwrap_or(false)) {
+                table.printstd();
+            }
         }
 
         Commands::Run { command_name } => {
