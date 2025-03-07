@@ -108,16 +108,14 @@ fn find_file_upwards(file_name: &str) -> Option<PathBuf> {
 fn main() {
     let cli = Cli::parse();
 
-    let task_file =
-        cli.taskfile.clone().unwrap_or_else(||
-                                    find_file_upwards("net-task.yml").expect("no net-task.yml file found")
-                                    );
+    // task file may exist here, may exist up directory OR may not exist at all!
+    let task_file: Option<PathBuf> = cli.taskfile.clone().or(find_file_upwards("net-task.yml"));
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
         Commands::List { pattern_name, plain } => {
-            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file));
+            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file.expect("did not find a net-task file!")));
 
             let mut table = Table::new();
 
@@ -153,7 +151,7 @@ fn main() {
         }
 
         Commands::Run { command_name } => {
-            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file));
+            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file.expect("did not find specified net-task file")));
             let b = Box::new(task_list);
             taskfile_iterator(&vec![b], |x, current_taskfile| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
@@ -167,7 +165,7 @@ fn main() {
 
         Commands::Print { command_name } => {
             // does everything run does but prints the found command
-            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file));
+            let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file.expect("did not find specified net-task file")));
             let b = Box::new(task_list);
             taskfile_iterator(&vec![b], |x, _in_taskfile| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
