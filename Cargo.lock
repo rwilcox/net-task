@@ -368,7 +368,7 @@ dependencies = [
 
 [[package]]
 name = "net-task"
-version = "0.1.0-2703aa3"
+version = "0.1.0-373b849"
 dependencies = [
  "clap",
  "prettytable-rs",
