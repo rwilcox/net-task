@@ -8,6 +8,8 @@ use std::path::{PathBuf};
 use prettytable::{Table};
 use std::env;
 
+use std::fs;
+
 pub mod taskfile;
 
 //const default_file: PathBuf = PathBuf::from("./net-task.yml");
@@ -40,7 +42,10 @@ enum Commands {
     /// like run but prints out the script source for the found item
     Print {
         command_name: String
-    }
+    },
+
+    /// Generates an example net-task.yml file
+    Init
 }
 
 
@@ -172,6 +177,14 @@ fn main() {
                     true
                 }
             });
+        }
+
+        Commands::Init => {
+          let content = include_str!("../example.yml");
+           match fs::write("net-task.yml", content) {
+               Ok(_) => println!("Successfully created net-task.yml."),
+               Err(e) => eprintln!("Failed to create net-task.yml: {}", e),
+    }
         }
     }
 }

@@ -1,0 +1,6 @@
+version: 1
+name: net-task
+tasks:
+  example:
+    description: your first example task!
+    shell: printf "hello world"
