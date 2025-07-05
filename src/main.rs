@@ -158,7 +158,8 @@ fn main() {
                     std::process::exit(x.run(current_taskfile).code().expect("exit code for child process not found"));
                     // false
                 } else {
-                    true
+                    println!("ERROR: {} task not found. Check spelling or OS selector.", command_name);
+                    std::process::exit(1);
                 }
             });
         }
