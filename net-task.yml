@@ -40,7 +40,7 @@ tasks:
       # now build it
       cargo build
   build:release:
-    os: linux
+    os: all
     shell: cargo build --release
   bad:
     shell: exit 1
