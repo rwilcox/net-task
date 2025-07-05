@@ -153,15 +153,20 @@ fn main() {
         Commands::Run { command_name } => {
             let task_list = Taskfile::new_from_file(cli.taskfile.unwrap_or(task_file.expect("did not find specified net-task file")));
             let b = Box::new(task_list);
+            let mut did_find_something = false;
             taskfile_iterator(&vec![b], |x, current_taskfile| -> bool {
                 if x.name.as_ref().unwrap() == command_name {
+                    did_find_something = true;
                     std::process::exit(x.run(current_taskfile).code().expect("exit code for child process not found"));
                     // false
                 } else {
-                    println!("ERROR: {} task not found. Check spelling or OS selector.", command_name);
-                    std::process::exit(1);
+                    true
                 }
             });
+            if !did_find_something {
+                println!("ERROR: {} task not found. Check spelling or OS selector.", command_name);
+                std::process::exit(1);
+            }
         }
 
         Commands::Print { command_name } => {
