@@ -138,7 +138,18 @@ impl Taskfile {
     pub fn get_location_folder(&self) -> Option<PathBuf> {
         if self.file_location.is_some() {
             let fl = self.file_location.clone().unwrap();
-            Some(fl.parent().unwrap().to_path_buf())
+
+            // if you pass a relative path with just its name (ie -t some-task-file.yml vs -t ./some-task-file.yml)
+            // it will return an empty string. However, in that case we should
+            // assume the user wants to work from the current working directory
+            // .... as right now you can't specify the name of the task file (using -t) to hunt for
+            // down the directory structure
+
+            if fl.parent().unwrap().to_path_buf().to_str().unwrap().len() == 0 {
+                Some( PathBuf::from(".") )
+            } else {
+                Some(fl.parent().unwrap().to_path_buf())
+            }
         } else {
             None
         }
