@@ -3,6 +3,15 @@
 version: 2.1
 orbs:
   github-cli: circleci/github-cli@2.5.0
+  rust: circleci/rust@1.7.0
+
+executors:
+  unknown_linux:
+    docker:
+      - image: cimg/rust:1.73.0
+    mseries_mac:
+      macos:
+        xcode: "16.4.0"
 
 commands:
   build-and-test-unix-like:
@@ -22,11 +31,15 @@ commands:
       # TODO: we want to bootstrap this way, or not??
 
 jobs:
+  build_macos:
+    platform:
+      - mseries_mac
+    steps:
+      - rust/install
+
   build:
-    docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/rust:1.73.0
+    platform:
+      - unknown_linux
 
     steps:
       # Checkout the code as the first step.
@@ -71,6 +84,7 @@ workflows:
   feature-branch-test:
     jobs:
       - build
+      - build_macos
       - release:
           requires:
             - build
