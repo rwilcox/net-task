@@ -49,19 +49,26 @@ impl TaskDefinition {
         run_task.env("NET_TASK_USER_CURRENT_DIRECTORY", user_current_dir);
         run_task.env("NET_TASK", std::env::current_exe().expect("could not get binary location"));
 
+        // TODO: show this in a debug or verbose mode!
+        // println!("Running command {} in directory {}", run_task.get_program().to_string_lossy(), run_task.get_current_dir().unwrap().to_str().unwrap());
+
         let needs_tempfile = self.as_tempfile.unwrap_or(false);
         let child_task = if !needs_tempfile {
             run_task.stdin(Stdio::piped());
-            let mut child_task = run_task.spawn().unwrap();
+            let mut child_task = run_task.spawn().expect(&format!("Could not spawn task using command {} in directory {}",
+                                                                  run_task.get_program().to_string_lossy(),
+                                                                  run_task.get_current_dir().unwrap().to_str().unwrap()
+            ));
             let _ = child_task.stdin.as_mut()
                 .ok_or("Child process stdin has not been captured!").unwrap()
                 .write_all(self.get_script().as_bytes());
             child_task
         } else {
             let tmpfile = create_temp_file(self.get_script());
-            run_task.arg(tmpfile.expect("Error when unwrapping tmp file"));
+            let f = tmpfile.expect("Error when unwrapping tmp file");
+            run_task.arg(f.clone());
 
-            run_task.spawn().unwrap()
+            run_task.spawn().expect(&format!("Could not spawn task command '{} {}'", self.get_command(), f.clone()))
         };
         let output = child_task.wait_with_output();
         //println!("{:?}", output);
