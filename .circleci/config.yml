@@ -12,7 +12,6 @@ executors:
   mseries_mac:
     macos:
       xcode: "16.4.0"
-    resource_class: m1.medium
 
 commands:
   build-and-test-unix-like:
