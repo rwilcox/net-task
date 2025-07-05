@@ -32,14 +32,12 @@ commands:
 
 jobs:
   build_macos:
-    platform:
-      - mseries_mac
+    executor: mseries_mac
     steps:
       - rust/install
 
   build:
-    platform:
-      - unknown_linux
+    executor: unknown_linux
 
     steps:
       # Checkout the code as the first step.
