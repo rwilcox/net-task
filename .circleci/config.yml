@@ -9,9 +9,9 @@ executors:
   unknown_linux:
     docker:
       - image: cimg/rust:1.73.0
-    mseries_mac:
-      macos:
-        xcode: "16.4.0"
+  mseries_mac:
+    macos:
+      xcode: "16.4.0"
 
 commands:
   build-and-test-unix-like:
