@@ -12,6 +12,7 @@ executors:
   mseries_mac:
     macos:
       xcode: "16.4.0"
+    resource_class: m1.medium
 
 commands:
   build-and-test-unix-like:
@@ -30,28 +31,31 @@ commands:
             mv target/debug/net-task tmp/
       # TODO: we want to bootstrap this way, or not??
 
-jobs:
-  build_macos:
-    executor: mseries_mac
+  release-build:
     steps:
-      - rust/install
-
-  build:
-    executor: unknown_linux
-
-    steps:
-      # Checkout the code as the first step.
-      - checkout
-      #- run:
-      #    name: download unknown linux
-      #    command: rustup target add x86_64-unknown-linux-musl
-      - build-and-test-unix-like
       - run:
           name: build release package
           command: tmp/net-task -t ./net-task-ci.yml run ci:create-arch-tagged-release
       - run:
           name: temp move binary over
           command: mv tmp/net-task target/net-task/net-task-tmp
+
+jobs:
+  build_macos:
+    executor: mseries_mac
+    steps:
+      - rust/install
+      - checkout
+      - build-and-test-unix-like
+      - release-build
+
+  build:
+    executor: unknown_linux
+
+    steps:
+      - checkout
+      - build-and-test-unix-like
+      - release-build
       - persist_to_workspace:
           root: target/
           paths:
