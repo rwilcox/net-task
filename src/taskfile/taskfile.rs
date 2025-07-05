@@ -145,7 +145,7 @@ impl Taskfile {
             // .... as right now you can't specify the name of the task file (using -t) to hunt for
             // down the directory structure
 
-            if fl.parent().unwrap().to_path_buf().to_str().unwrap().len() == 0 {
+            if fl.parent().unwrap().to_path_buf().to_str().unwrap().is_empty() {
                 Some( PathBuf::from(".") )
             } else {
                 Some(fl.parent().unwrap().to_path_buf())
