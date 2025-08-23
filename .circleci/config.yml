@@ -30,15 +30,18 @@ commands:
             mv target/debug/net-task tmp/
       # TODO: we want to bootstrap this way, or not??
 
-  release-build:
+  release-build-only:
     steps:
       - run:
           name: build release package
           command: tmp/net-task -t ./net-task-ci.yml run ci:create-arch-tagged-release
+
+  release-build-with-bin:
+    steps:
+      - release-build-only
       - run:
           name: temp move binary over
           command: mv tmp/net-task target/net-task/net-task-tmp
-
 jobs:
   build_macos:
     executor: mseries_mac
@@ -46,7 +49,7 @@ jobs:
       - rust/install
       - checkout
       - build-and-test-unix-like
-      - release-build
+      - release-build-only
       - persist_to_workspace:
           root: target/
           paths:
@@ -57,7 +60,7 @@ jobs:
     steps:
       - checkout
       - build-and-test-unix-like
-      - release-build
+      - release-build-with-bin
       - persist_to_workspace:
           root: target/
           paths:
