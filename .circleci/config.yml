@@ -47,7 +47,10 @@ jobs:
       - checkout
       - build-and-test-unix-like
       - release-build
-
+      - persist_to_workspace:
+          root: target/
+          paths:
+            - net-task/
   build:
     executor: unknown_linux
 
