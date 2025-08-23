@@ -48,6 +48,19 @@ tasks:
       echo $ARCHIVE_NAME > target/archive_name
       echo "done creating architecture specific .tar.gz files"
 
+  ci:gh:test:release_tag:
+    os: unix
+    description: test if the release stuff WOULD be triggered
+    shell: |
+      set -e
+      RELEASE_TAG=$(gh release list --json name --json isDraft --json tagName --jq '.[] | select(.isDraft == true) | .tagName')
+
+      if [ -z $RELEASE_TAG ]; then
+        echo "no release tag, assuming not releasable in current state"
+        exit 0
+      fi
+      echo "release tag found"
+
   ci:gh:upload-binary:
     os: unix
     description: upload the binary to the latest draft Release
