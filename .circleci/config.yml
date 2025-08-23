@@ -92,5 +92,6 @@ workflows:
       - release:
           requires:
             - build
+            - build_macos
           context:
             - github
