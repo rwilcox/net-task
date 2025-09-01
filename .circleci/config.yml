@@ -55,7 +55,6 @@ commands:
 jobs:
   build_macos:
     executor: mseries_mac
-    context: net-task
     steps:
       - rust/install
       - checkout
@@ -103,7 +102,9 @@ workflows:
   feature-branch-test:
     jobs:
       - build
-      - build_macos
+      - build_macos:
+          context:
+            - net-task
       - release:
           requires:
             - build
