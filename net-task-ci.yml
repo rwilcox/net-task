@@ -14,6 +14,11 @@ tasks:
       security default-keychain -s $KEYCHAIN_NAME
       security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
 
+      # Which intermediate cert do you really need? open the details in your cert in Keychain Access
+      # and under issuer check common name AND org unit. Then use curl to download appropriate
+      # certs from https://www.apple.com/certificateauthority/
+      # here our common ID was Developer ID and our org unit G2
+      # so we found the Developer ID - G2 link on that page
       echo "downloading intermediate cert from apple to complete trust chain"
       curl https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o /tmp/apple_cert.cer
       sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/apple_cert.cer
@@ -29,6 +34,22 @@ tasks:
 
       /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/net-task -v
 
+      # Double check
+      /usr/bin/codesign -vvv --deep target/release/net-task
+
+  ci:notorize:
+    os: macos
+    shell: |
+      RELEASE_VERSION=$($NET_TASK run build:get-current-version)
+      BUILD_INFO="${RELEASE_VERSION}_$(uname -o | cut -d'/' -f2)_$(uname -m)"
+
+      ditto -c -k ../target/release/net-task "net-task_${BUILD_INFO}.zip"
+      echo "notorizing app (may take a minute...)"
+
+      xcrun notarytool store-credentials "notarytool-profile" --apple-id "$MACOS_NOTARIZATION_APPLE_ID" --team-id "$MACOS_NOTARIZATION_TEAM_ID" --password "$MACOS_NOTARIZATION_PWD"
+
+      xcrun notarytool submit "net-task_${BUILD_INFO}.zip" --keychain-profile "notarytool-profile" --wait
+
   ci:gh:auth:
     description: authorize
     os: unix
@@ -40,6 +61,7 @@ tasks:
       fi
       gh auth login --with-token < /tmp/gh-token
       rm /tmp/gh-token
+
   ci:gh:create-release-draft:
     description: Create a Draft release for binary uploads
     os: unix

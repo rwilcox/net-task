@@ -45,6 +45,13 @@ commands:
             MACOS_CERTIFICATE_NAME: "Developer ID Application: Ryan Wilcox (4549BZJTUU)"
             MACOS_NOTARIZATION_TEAM_ID: "4549BZJTUU"
             KEYCHAIN_NAME: build-nettask2.keychain
+      - run:
+          name: "Notorize MacOS Binary"
+          command: tmp/net-task -t ./net-task-ci.yml run ci:notorize
+          environment:
+            MACOS_CERTIFICATE_NAME: "Developer ID Application: Ryan Wilcox (4549BZJTUU)"
+            MACOS_NOTARIZATION_TEAM_ID: "4549BZJTUU"
+            KEYCHAIN_NAME: build-nettask2.keychain
 
   release-build-just-build-it:
     steps:
