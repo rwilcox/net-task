@@ -13,6 +13,12 @@ tasks:
       security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
       security default-keychain -s $KEYCHAIN_NAME
       security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
+
+      echo "downloading intermediate cert from apple to complete trust chain"
+      curl https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer > /tmp/apple_cert.cer
+      security import /tmp/apple_cert.cer -k $KEYCHAIN_NAME -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+
+      echo "importing our own cert"
       security import tmp_cert.p12 -k $KEYCHAIN_NAME -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
       security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
 
