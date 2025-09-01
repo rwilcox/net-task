@@ -24,7 +24,7 @@ tasks:
 
        security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
 
-      /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/net-task -v
+      sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/net-task -v
 
   ci:gh:auth:
     description: authorize
