@@ -46,6 +46,11 @@ commands:
             MACOS_NOTARIZATION_TEAM_ID: "4549BZJTUU"
             KEYCHAIN_NAME: build-nettask2.keychain
 
+  release-build-just-build-it:
+    steps:
+      - run:
+          command: tmp/net-task run build:release
+
   release-build-with-bin:
     steps:
       - release-build-only
@@ -59,7 +64,7 @@ jobs:
       - rust/install
       - checkout
       - build-and-test-unix-like
-      - release-build-only
+      - release-build-just-build-it
       - codesign
       - persist_to_workspace:
           root: target/
