@@ -38,13 +38,13 @@ commands:
 
   codesign:
     steps:
-      run:
-        name: "Sign MacOS Binary"
-        command: tmp/net-task -t ./net-task-ci.yml run ci:sign
-        environment:
-          MACOS_CERTIFICATE_NAME: "Developer ID Application: Ryan Wilcox (4549BZJTUU)"
-          MACOS_NOTARIZATION_TEAM_ID: "4549BZJTUU"
-          KEYCHAIN_NAME: build-nettask2.keychain
+      - run:
+          name: "Sign MacOS Binary"
+          command: tmp/net-task -t ./net-task-ci.yml run ci:sign
+          environment:
+            MACOS_CERTIFICATE_NAME: "Developer ID Application: Ryan Wilcox (4549BZJTUU)"
+            MACOS_NOTARIZATION_TEAM_ID: "4549BZJTUU"
+            KEYCHAIN_NAME: build-nettask2.keychain
 
   release-build-with-bin:
     steps:
