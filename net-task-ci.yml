@@ -40,10 +40,12 @@ tasks:
   ci:notorize:
     os: macos
     shell: |
+      set -x
+
       RELEASE_VERSION=$($NET_TASK run build:get-current-version)
       BUILD_INFO="${RELEASE_VERSION}_$(uname -o | cut -d'/' -f2)_$(uname -m)"
 
-      ditto -c -k ../target/release/net-task "net-task_${BUILD_INFO}.zip"
+      ditto -c -k target/release/net-task "net-task_${BUILD_INFO}.zip"
       echo "notorizing app (may take a minute...)"
 
       xcrun notarytool store-credentials "notarytool-profile" --apple-id "$MACOS_NOTARIZATION_APPLE_ID" --team-id "$MACOS_NOTARIZATION_TEAM_ID" --password "$MACOS_NOTARIZATION_PWD"
