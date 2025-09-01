@@ -55,6 +55,7 @@ commands:
 jobs:
   build_macos:
     executor: mseries_mac
+    context: net-task
     steps:
       - rust/install
       - checkout
