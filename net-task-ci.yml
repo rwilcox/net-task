@@ -18,6 +18,9 @@ tasks:
       curl https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o /tmp/apple_cert.cer
       sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/apple_cert.cer
 
+      curl https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer -o /tmp/apple_cert_g2.cer
+      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/apple_cert_g2.cer
+
       echo "importing our own cert"
       security import tmp_cert.p12 -k $KEYCHAIN_NAME -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
       security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
