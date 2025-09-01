@@ -16,7 +16,7 @@ tasks:
 
       echo "downloading intermediate cert from apple to complete trust chain"
       curl https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o /tmp/apple_cert.cer
-      security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/apple_cert.cer
+      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/apple_cert.cer
 
       echo "importing our own cert"
       security import tmp_cert.p12 -k $KEYCHAIN_NAME -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
