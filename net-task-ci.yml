@@ -3,6 +3,23 @@ name: build_tasks
 externals:
   - ./net-task.yml
 tasks:
+  ci:sign:
+    os: macos
+    shell: |
+      set -e
+      set -x
+
+      echo $MACOS_CERTIFICATE | base64 --decode > tmp_cert.p12
+      security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
+      security default-keychain -s $KEYCHAIN_NAME
+      security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
+      security import tmp_cert.p12 -k $KEYCHAIN_NAME -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+      security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
+
+       security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_NAME
+
+      /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime ../target/release/net-task -v
+
   ci:gh:auth:
     description: authorize
     os: unix
